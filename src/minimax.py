@@ -28,8 +28,14 @@ class MiniMax(AI):
         if next_turn == X_PIECE:
             max_eval = float('-inf')
             for move in game_state.get_empty_cells():
-                next_state = game_state.simulate_move(move, next_turn)
-                current_eval = self.minimax(game_state=next_state, next_turn=O_PIECE, depth_limit=depth_limit-1, alpha=alpha, beta=beta)
+
+                # make move & calculate
+                game_state.execute_move(move, next_turn)
+                current_eval = self.minimax(game_state=game_state, next_turn=O_PIECE, depth_limit=depth_limit-1, alpha=alpha, beta=beta)
+
+                # undo move
+                game_state.cells[move[0]][move[1]] = EMPTY_CELL
+
                 max_eval = max(max_eval, current_eval)
                 alpha = max(alpha, max_eval)
                 if beta <= alpha:
@@ -39,8 +45,11 @@ class MiniMax(AI):
         else:
             min_eval = float('inf')
             for move in game_state.get_empty_cells():
-                next_state = game_state.simulate_move(move, next_turn)
-                current_eval = self.minimax(game_state=next_state, next_turn=X_PIECE, depth_limit=depth_limit-1, alpha=alpha, beta=beta)
+
+                game_state.execute_move(move, next_turn)
+                current_eval = self.minimax(game_state=game_state, next_turn=X_PIECE, depth_limit=depth_limit-1, alpha=alpha, beta=beta)
+                game_state.cells[move[0]][move[1]] = EMPTY_CELL
+
                 min_eval = min(min_eval, current_eval)
                 beta = min(min_eval, beta)
                 if beta <= alpha:
@@ -64,5 +73,5 @@ class MiniMax(AI):
                 best_choice = move
             if (piece == X_PIECE and best_eval == float('inf')) or (piece == O_PIECE and best_eval == float('-inf')):
                 return best_choice
-        print("best is", best_choice, "eval is", best_eval)
+        print("best for", piece, "is", best_choice, "eval is", best_eval)
         return best_choice

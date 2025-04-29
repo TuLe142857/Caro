@@ -1,6 +1,7 @@
 from state import *
 
-def eval_basic(game_state:State, next_turn:str)->int|float:
+
+def evaluate_basic(game_state:State, next_turn:str)->int|float:
     status = game_state.status()
     if status == X_WIN:
         return float('inf')
@@ -9,4 +10,5 @@ def eval_basic(game_state:State, next_turn:str)->int|float:
     elif status == DRAW:
         return 0
     return 0
+
 

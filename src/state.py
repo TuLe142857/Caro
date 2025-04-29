@@ -5,8 +5,6 @@ EMPTY_CELL = '.'
 BOARD_SIZE = 10
 WIN_LENGTH = 5
 
-
-
 X_WIN = 0
 O_WIN = 1
 DRAW = 2
