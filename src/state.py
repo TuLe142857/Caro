@@ -54,8 +54,7 @@ class State:
         return next_state
 
     def status(self)->int:
-        if len(self.get_empty_cells()) == 0:
-            return DRAW
+
 
         def check_line(r, c, direction):
             if self.cells[r][c] == EMPTY_CELL:
@@ -80,4 +79,6 @@ class State:
                             return X_WIN
                         return O_WIN
 
+        if len(self.get_empty_cells()) == 0:
+            return DRAW
         return NOT_FINISH
