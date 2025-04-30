@@ -32,6 +32,7 @@ class Game:
         self.player_o = player_o
         self.next_turn = first_turn
         self.state = State()
+        self.match_record = []
 
         # pygame screen, clock, fps
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -72,6 +73,7 @@ class Game:
         # print("make move call", self.next_turn, move)
         try:
             self.state.execute_move(position=move, piece=self.next_turn)
+            self.match_record.append(move)
         except Exception as e:
             print(f"Can not put piece {self.next_turn} to position {move}")
             print(f"Exception message: {str(e)}")
@@ -153,3 +155,4 @@ class Game:
             self.clock.tick(self.fps)
 
         self.wait_for_key_press()
+        print(self.match_record)

@@ -82,3 +82,59 @@ class State:
         if len(self.get_empty_cells()) == 0:
             return DRAW
         return NOT_FINISH
+
+    def check_win_at_cell(self, r:int, c:int)->int:
+
+        if self.cells[r][c] == EMPTY_CELL:
+            return DRAW if len(self.get_empty_cells()) == 0 else NOT_FINISH
+        def check(d)->bool:
+            piece = self.cells[r][c]
+            # huong nguoc lai
+            d_ = (-d[0], -d[1])
+            count  = 1
+
+            p = [r, c]
+            while count < WIN_LENGTH:
+                p[0] += d[0]
+                p[1] += d[1]
+                if not (0 <= p[0] < BOARD_SIZE and 0 <= p[1] < BOARD_SIZE):
+                    break
+                if self.cells[p[0]][p[1]] != piece:
+                    break
+                count += 1
+
+            # right = count -1
+            p = [r, c]
+            while count < WIN_LENGTH:
+                p[0] += d_[0]
+                p[1] += d_[1]
+                if not( 0 <= p[0] < BOARD_SIZE and 0 <= p[1] < BOARD_SIZE):
+                    break
+                if self.cells[p[0]][p[1]] != piece:
+                    break
+                count += 1
+            # left = count-1-right
+            # debug
+            # print(f"At({r}, {c}), direction = {d} and {d_}, count = {count}, left = {left}, right={right}")
+            return count >= WIN_LENGTH
+
+        #---------------------------------
+        directions = [(1, 0), (0, 1), (1, 1), (-1, 1)]
+        for direction in directions:
+            if check(direction):
+                return X_WIN if self.cells[r][c] == X_PIECE else O_WIN
+
+        return DRAW if len(self.get_empty_cells()) == 0 else NOT_FINISH
+
+import random
+if __name__ == '__main__':
+    state = State()
+    for row in range(BOARD_SIZE):
+        for col in range(BOARD_SIZE):
+            state.cells[row][col] = random.choice([X_PIECE, O_PIECE, EMPTY_CELL])
+    print(state)
+    r = int(input("r = "))
+    c = int(input("c = "))
+    result = state.check_win_at_cell(r, c)
+
+    print("\nResult:", result)
