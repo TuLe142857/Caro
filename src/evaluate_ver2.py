@@ -77,19 +77,19 @@ def calc_chain_value(chain:tuple[int, int, int],  is_next_turn:bool)->int:
     flag = 0
     # 1 left to win
     if chain[1] == WIN_LENGTH-1:
-        if (chain[1] + chain[1] >= WIN_LENGTH) and (chain[1]+chain[2]) >= WIN_LENGTH:
+        if (chain[1] + chain[0] >= WIN_LENGTH) and (chain[1]+chain[2]) >= WIN_LENGTH:
             return 10**9 if is_next_turn else 10**8
 
         return 10**9 if is_next_turn else 10**5
 
     # 2 left to win
     if chain[1] == WIN_LENGTH-2:
-        if (chain[1] + chain[1] >= WIN_LENGTH) and (chain[1] + chain[2]) >= WIN_LENGTH:
-            return 10**8 if is_next_turn else 10**5
-        return 10**3
+        if (chain[1] + chain[0] >= WIN_LENGTH) and (chain[1] + chain[2]) >= WIN_LENGTH:
+            return 10**7 if is_next_turn else 10**6
+        return 10**4 if is_next_turn else 10*3
 
     # cac TH khac
-    if (chain[1] + chain[1] >= WIN_LENGTH) and (chain[1] + chain[2]) >= WIN_LENGTH:
+    if (chain[1] + chain[0] >= WIN_LENGTH) and (chain[1] + chain[2]) >= WIN_LENGTH:
         return 100*chain[1]
     return 10*chain[1]
 
@@ -109,11 +109,11 @@ def calculate_at_point(game_state:State, r:int, c:int, next_turn:str)->int|float
 def evaluate_ver2(game_state:State, next_turn:str)->int|float:
     status = game_state.status()
     if status == X_WIN:
-        return 10**15
-        # return float('inf')
+        # return 10**15
+        return float('inf')
     elif status == O_WIN:
-        return -10**15
-        # return float('-inf')
+        # return -10**15
+        return float('-inf')
     elif status == DRAW:
         return 0
 

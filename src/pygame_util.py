@@ -46,7 +46,9 @@ class TextBox(Component):
                  outer_surface:pygame.Surface=None,
                  text_color:tuple[int, int, int]=(0, 0, 0),
                  background_color:tuple[int, int, int]=(0, 255, 255),
-                 font:pygame.font.Font=None
+                 font:pygame.font.Font=None,
+                 border_width:int=0,
+                 border_color:tuple[int, int, int]=(0, 0, 0)
     ):
         super().__init__(x, y, width, height, outer_surface)
         self.background_color = background_color
@@ -54,16 +56,76 @@ class TextBox(Component):
         if font is None:
             font = pygame.font.Font(None, 30)
         self.font = font
-
+        self.border_width = border_width
+        self.border_color = border_color
         self.set_text("")
 
     def set_text(self, text:str):
         self.surface.fill(self.background_color)
+        if self.border_width > 0:
+            pygame.draw.rect(self.surface, self.border_color, (0, 0, self.width, self.height), width=self.border_width)
         text_display = self.font.render(text, True, self.text_color)
         blit_surface_and_center(outer=self.surface, inner=text_display)
 
+class EvaluationBar(Component):
+    def __init__(self, x: int, y: int, width: int, height: int, is_horizontal:bool=True):
+        super().__init__(x, y, width, height)
+        self.is_horizontal = is_horizontal
+        self.set_evaluate(0.5, 0.5)
+
+
+    def set_evaluate(self, eval_x:float, eval_o:float):
+        self.surface.fill((255, 255, 255))
+        if eval_o == 0:
+            eval_x = 1.0
+        elif eval_x == 0:
+            eval_o = 1.0
+        else:
+            eval_x, eval_o = eval_x/(eval_x+eval_o), eval_o/(eval_x+ eval_o)
+
+        rect_x = [0, 0, self.width, self.height]
+        rect_o = [0, 0, self.width, self.height]
+
+        if self.is_horizontal:
+            rect_x[2] = int(self.width*eval_x)
+
+            rect_o[0] = rect_x[2]
+            rect_o[2] = self.width - rect_x[2]
+        else:
+            rect_x[3] = int(self.height * eval_x)
+
+            rect_o[1] = rect_x[3]
+            rect_o[3] = self.height - rect_x[3]
+
+        sur_x = pygame.Surface((rect_x[2], rect_x[3]))
+        sur_x.fill(color=(255, 0, 0))
+        # pygame.draw.rect(sur_x, (0, 0, 0), (0, 0, rect_x[2], rect_x[3]), width=1)
+
+        sur_o = pygame.Surface((rect_o[2], rect_o[3]))
+        sur_o.fill(color=(0,0,255))
+        # pygame.draw.rect(sur_o, (0, 0, 0), (0, 0, rect_o[2], rect_o[3]), width=1)
+
+        self.surface.blit(sur_x, (rect_x[0], rect_x[1]))
+        self.surface.blit(sur_o, (rect_o[0], rect_o[1]))
+        if self.is_horizontal:
+            pygame.draw.line(
+                self.surface,
+                (0, 0, 0),
+                start_pos=(self.width/2, 0),
+                end_pos=(self.width/2, self.height)
+            )
+        else:
+            pygame.draw.line(
+                self.surface,
+                (0, 0, 0),
+                start_pos=(0, self.height/2),
+                end_pos=(self.width, self.height/2)
+            )
+
+
+
 class Board(Component):
-    _CELL_SIZE = 45
+    _CELL_SIZE = 30
     def __init__(self,
                  x:int, y:int,
                  outer_surface:pygame.Surface=None,
@@ -89,7 +151,19 @@ class Board(Component):
 
         # mac dinh de trong
         self.set_state(State())
+    def put_piece(self, row, col, piece, color, background):
+        text_display = self.font.render(piece, True, color)
 
+        pos = [col*Board._CELL_SIZE+1, row*Board._CELL_SIZE+1]
+        # background
+        cell = pygame.Surface((Board._CELL_SIZE-1, Board._CELL_SIZE-1))
+        cell.fill(background)
+        self.surface.blit(cell, pos)
+        # text
+        align = get_center_position((Board._CELL_SIZE, Board._CELL_SIZE), text_display.get_size())
+        pos[0] += align[0]
+        pos[1] += align[1]
+        self.surface.blit(text_display, pos)
     def set_state(self, state:State):
         self.surface.fill(self.background_color)
         pygame.draw.rect(self.surface, self.line_color, (0, 0, self.width, self.height), width=2)

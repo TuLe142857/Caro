@@ -50,10 +50,12 @@ class MiniMaxOptimal(AI):
 
         """
         super().__init__(f"MiniMaxOptimal (depth={depth})")
+        if depth <= 0:
+            depth = 1
         self.depth = depth
         self.evaluate_function = evaluate_function
         self.search_radius = search_radius
-        if max_extra_move ==0 :
+        if max_extra_move <= 0 :
             max_extra_move = 1
         self.max_extra_move = max_extra_move
 
@@ -113,43 +115,44 @@ class MiniMaxOptimal(AI):
     @override
     def find_move(self, game_state:State, piece:str) ->tuple[int, int]:
         opponent = O_PIECE if piece == X_PIECE else X_PIECE
-        moves = game_state.get_empty_cells()
-        # moves  = find_valid_move(game_state=game_state, sr=self.search_radius, extra_move=self.max_extra_move)
+        moves  = find_valid_move(game_state=game_state, sr=self.search_radius, extra_move=self.max_extra_move)
+        if len(game_state.get_empty_cells()) == BOARD_SIZE**2:
+            moves = game_state.get_empty_cells()
         random.shuffle(moves)
         best_choice = moves[0]
         best_eval = float('-inf') if piece == X_PIECE else float('inf')
 
         for move in moves:
             next_state = game_state.simulate_move(move, piece)
-            current_eval = self.minimax(game_state=next_state, next_turn=opponent, depth_limit=self.depth)
+            current_eval = self.minimax(game_state=next_state, next_turn=opponent, depth_limit=self.depth-1)
             if (piece == X_PIECE and current_eval > best_eval) or (piece == O_PIECE and current_eval < best_eval):
                 best_eval = current_eval
                 best_choice = move
             if (piece == X_PIECE and best_eval == float('inf')) or (piece == O_PIECE and best_eval == float('-inf')):
                 return best_choice
-        print("best for", piece, "is", best_choice, "eval is", best_eval)
+        # print("best for", piece, "is", best_choice, "eval is", best_eval)
         return best_choice
 
 
-# test
-if __name__ == '__main__':
-    state = State()
-    state.cells = [
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', 'O', 'X', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', 'X', 'O', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
-        ['O', '.', '.', '.', '.', 'O', '.', '.', '.', '.']
-    ]
-
-    print(state)
-    sr = int(input("search radius: "))
-    ext = int(input("extra move: "))
-
-    moves = find_valid_move(game_state=state, sr=sr, extra_move=ext)
-    print(f"optimal move({len(moves)} moves):\n", moves)
+# # test
+# if __name__ == '__main__':
+#     state = State()
+#     state.cells = [
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', 'O', 'X', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', 'X', 'O', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+#         ['O', '.', '.', '.', '.', 'O', '.', '.', '.', '.']
+#     ]
+#
+#     print(state)
+#     sr = int(input("search radius: "))
+#     ext = int(input("extra move: "))
+#
+#     moves = find_valid_move(game_state=state, sr=sr, extra_move=ext)
+#     print(f"optimal move({len(moves)} moves):\n", moves)

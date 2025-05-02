@@ -21,6 +21,8 @@ class MiniMax(AI):
     )->int|float:
 
         pygame.event.pump()
+        if depth_limit <= 0:
+            depth_limit = 1
         if depth_limit == 0 or game_state.status() != NOT_FINISH:
             return self.evaluate_function(game_state, next_turn)
 
@@ -67,7 +69,7 @@ class MiniMax(AI):
 
         for move in moves:
             next_state = game_state.simulate_move(move, piece)
-            current_eval = self.minimax(game_state=next_state, next_turn=opponent, depth_limit=self.depth)
+            current_eval = self.minimax(game_state=next_state, next_turn=opponent, depth_limit=self.depth-1)
             if (piece == X_PIECE and current_eval > best_eval) or (piece == O_PIECE and current_eval < best_eval):
                 best_eval = current_eval
                 best_choice = move
