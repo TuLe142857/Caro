@@ -2,7 +2,7 @@ X_PIECE = 'X'
 O_PIECE = 'O'
 EMPTY_CELL = '.'
 
-BOARD_SIZE = 10
+BOARD_SIZE = 15
 WIN_LENGTH = 5
 
 X_WIN = 0

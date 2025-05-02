@@ -15,7 +15,7 @@ if __name__ == '__main__':
     ai_ver2 = MiniMaxOptimal(evaluate_function=evaluate_ver2, depth=3, search_radius=1, max_extra_move=2)
     ai_ver2_d3 = MiniMaxOptimal(evaluate_function=evaluate_ver2, depth=4, search_radius=1, max_extra_move=2)
 
-    ai_ver3 = MiniMaxVer3(evaluate_function=evaluate_ver2, depth=2, search_radius=1, extra_move=1)
+    ai_ver3 = MiniMaxVer3(evaluate_function=evaluate_ver2, depth=4, search_radius=1, extra_move=1)
     ai_ver3_d3 = MiniMaxVer3(evaluate_function=evaluate_ver2, depth=3, search_radius=1, extra_move=1)
 
     # PvP

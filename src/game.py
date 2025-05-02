@@ -94,7 +94,7 @@ class Game:
         )
 
         self.score_board = TextBox(
-            x = self.board.x + self.board.width + 10,
+            x = self.board.x + self.board.width + 70,
             y = self.board.y,
             width= WINDOW_WIDTH - 30 - self.board.width,
             height=75,
@@ -102,9 +102,9 @@ class Game:
         )
 
         # game replay button
-        btn_w = (WINDOW_WIDTH - 30 - self.board.width)//2
+        btn_w = (WINDOW_WIDTH - 30 - self.board.width - 60)//2
         btn_h = 50
-        btn_x = self.board.x + self.board.width + 10
+        btn_x = self.board.x + self.board.width + 10 + 60
         btn_y = self.score_board.y + self.score_board.height + 10
 
         self.prev_btn = TextBox(
@@ -115,7 +115,12 @@ class Game:
             border_width=1,
             background_color=(87, 255, 129)
         )
-        self.prev_btn.set_text("<=")
+        prev_icon = pygame.image.load(r"image/previous-button-icon.png")
+        prev_icon = pygame.transform.scale(
+            prev_icon,
+            (min(self.prev_btn.width, self.prev_btn.height), min(self.prev_btn.width, self.prev_btn.height))
+        )
+        blit_surface_and_center(self.prev_btn.surface, prev_icon)
 
         self.next_btn = TextBox(
             x=btn_x + btn_w,
@@ -126,7 +131,7 @@ class Game:
             background_color=(87, 255, 129)
         )
         # self.next_btn.set_text("=>")
-        next_icon = pygame.image.load(r"/home/tule/Pictures/next-button-icon.png")
+        next_icon = pygame.image.load(r"image/next-button-icon.png")
         next_icon = pygame.transform.scale(
             next_icon,
             (min(self.next_btn.width, self.next_btn.height), min(self.next_btn.width, self.next_btn.height))
@@ -162,13 +167,26 @@ class Game:
 
         self.exit_replay_mode_btn.set_text("exit review mode")
 
+        # take back_button
+        self.take_back_btn = TextBox(
+            x=btn_x,
+            y=btn_y + btn_h*3,
+            width=btn_w * 2,
+            height=btn_h,
+            border_width=1
+        )
+        self.take_back_btn.set_text("takeback")
+
         self.components = [
             self.board,
             self.next_btn,
+            self.prev_btn,
             self.message_box,
             self.score_board,
             self.eval_box,
+            self.take_back_btn,
             self.evaluation_bar
+
         ]
 
     def wait_for_key_press(self):
@@ -292,13 +310,22 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
                 break
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                condition = self.board.contain_point(mx, my) \
+            elif event.type == pygame.MOUSEBUTTONDOWN \
                     and event.button == MOUSE_LEFT \
-                    and isinstance(self.next_player(), Human)
-                if condition:
+                    and isinstance(self.next_player(), Human):
+                mx, my = pygame.mouse.get_pos()
+                if self.board.contain_point(mx, my):
                     self.make_move(self.board.mouse_click_at_cell(mx, my))
+                if self.take_back_btn.contain_point(mx, my):
+                    if len(self.match_record) >= 2:
+                        move = self.match_record.pop()
+                        self.state.cells[move[0]][move[1]] = EMPTY_CELL
+                        move = self.match_record.pop()
+                        self.state.cells[move[0]][move[1]] = EMPTY_CELL
+
+                        self.need_to_render = True
+
+
 
 
     def render(self):

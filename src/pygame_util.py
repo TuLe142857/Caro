@@ -125,7 +125,7 @@ class EvaluationBar(Component):
 
 
 class Board(Component):
-    _CELL_SIZE = 30
+    _CELL_SIZE = 40
     def __init__(self,
                  x:int, y:int,
                  outer_surface:pygame.Surface=None,
