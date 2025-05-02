@@ -6,6 +6,7 @@ import pygame
 from state import *
 from player import *
 from pygame_util import *
+import os
 
 pygame.init()
 
@@ -115,7 +116,10 @@ class Game:
             border_width=1,
             background_color=(87, 255, 129)
         )
-        prev_icon = pygame.image.load(r"image/previous-button-icon.png")
+        image_path = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(image_path, "image")
+
+        prev_icon = pygame.image.load(os.path.join(image_path, "previous-button-icon.png"))
         prev_icon = pygame.transform.scale(
             prev_icon,
             (min(self.prev_btn.width, self.prev_btn.height), min(self.prev_btn.width, self.prev_btn.height))
@@ -131,7 +135,7 @@ class Game:
             background_color=(87, 255, 129)
         )
         # self.next_btn.set_text("=>")
-        next_icon = pygame.image.load(r"image/next-button-icon.png")
+        next_icon = pygame.image.load(os.path.join(image_path, "next-button-icon.png"))
         next_icon = pygame.transform.scale(
             next_icon,
             (min(self.next_btn.width, self.next_btn.height), min(self.next_btn.width, self.next_btn.height))
