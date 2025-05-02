@@ -108,7 +108,7 @@ class MiniMaxVer3(AI):
         opponent = O_PIECE if piece==X_PIECE else X_PIECE
         moves = self.find_valid_move(game_state) if len(game_state.get_empty_cells()) != BOARD_SIZE**2 else game_state.get_empty_cells()
         random.shuffle(moves)
-        # print("moves search:", len(moves) )
+        print(f"move {BOARD_SIZE**2 - len(game_state.get_empty_cells()) + 1} total move in search:", len(moves) )
         # print(moves)
         best_eval = float('-inf') if piece == X_PIECE else float("inf")
         best_depth = 0
